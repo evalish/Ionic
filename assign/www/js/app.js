@@ -53,12 +53,12 @@ angular.module('assign', ['ionic', 'assign.controllers','assign.services'])
         }
       }
     })
-    .state('app.menu', {
+     .state('app.menu', {
       url: '/menu',
       views: {
         'mainContent': {
           templateUrl: 'templates/menu.html',
-          controller: ''
+          controller: 'MenuController'
         }
       }
     })
@@ -71,11 +71,11 @@ angular.module('assign', ['ionic', 'assign.controllers','assign.services'])
       }
     })
   .state('app.dishdetails', {
-    url: '/menu/:Id',
+    url: '/menu/:id',
     views: {
       'mainContent': {
         templateUrl: 'templates/dishdetail.html',
-        controller: ''
+        controller: 'DishDetailController'
       }
     }
   });
