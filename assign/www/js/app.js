@@ -42,17 +42,17 @@ angular.module('assign', ['ionic', 'assign.controllers','assign.services'])
   })
 
 
-
-  
-
-  .state('app.aboutus', {
+ .state('app.aboutus', {
       url: '/aboutus',
       views: {
         'mainContent': {
-          templateUrl: 'templates/aboutus.html'
+          templateUrl: 'templates/aboutus.html',
+          controller: 'AboutController'
         }
       }
     })
+  
+
      .state('app.menu', {
       url: '/menu',
       views: {
