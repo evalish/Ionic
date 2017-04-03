@@ -166,7 +166,7 @@ angular.module('assign.controllers', [])
     };
 }])
 
-.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function($scope, $stateParams, menuFactory, baseURL) {
+.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicPopover', '$ionicPopup', '$ionicModal', function($scope, $stateParams, menuFactory, favoriteFactory, baseURL, $ionicPopover, $ionicPopup, $ionicModal) {
     $scope.baseURL = baseURL;
     $scope.dish = {};
     $scope.showDish = false;
@@ -185,7 +185,49 @@ angular.module('assign.controllers', [])
             }
         );
 
+    $ionicPopover.fromTemplateUrl('templates/dish-detail-popover.html', {
+        scope: $scope
+    }).then(function(popover) {
+        $scope.popover = popover;
+    });
+    $scope.openPopover = function($event) {
+        $scope.popover.show($event);
+    };
 
+    $scope.closePopover = function() {
+        $scope.popover.hide();
+    };
+    $scope.addFavorite = function() {
+
+        favoriteFactory.addToFavorites($scope.dish.id);
+        var alertPopup = $ionicPopup.alert({
+            title: 'Congratulations!',
+            template: 'You added a favorite dish.'
+
+        });
+
+    };
+
+
+    $ionicModal.fromTemplateUrl('templates/comment.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.commentForm = modal;
+    });
+    $scope.closeComment = function() {
+        $scope.commentForm.hide();
+    };
+
+    // open comment modal
+    $scope.openComment = function() {
+        $scope.commentForm.show();
+    };
+
+    $scope.addComment = function() {
+        $scope.openComment();
+        $scope.closePopover();
+
+    };
 }])
 
 .controller('DishCommentController', ['$scope', 'menuFactory', function($scope, menuFactory) {
@@ -251,29 +293,29 @@ angular.module('assign.controllers', [])
         console.log($scope.leaders);
 
     }])
-.controller('FavoritesController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', '$ionicPopup', '$ionicLoading', '$timeout', function ($scope, menuFactory, favoriteFactory, baseURL, $ionicListDelegate, $ionicPopup, $ionicLoading, $timeout) {
-          $scope.baseURL = baseURL;
-    $scope.shouldShowDelete = false;
+    .controller('FavoritesController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', '$ionicPopup', '$ionicLoading', '$timeout', function($scope, menuFactory, favoriteFactory, baseURL, $ionicListDelegate, $ionicPopup, $ionicLoading, $timeout) {
+        $scope.baseURL = baseURL;
+        $scope.shouldShowDelete = false;
 
-    $ionicLoading.show({
-        template: '<ion-spinner></ion-spinner> Loading...'
-    });
-
-    $scope.favorites = favoriteFactory.getFavorites();
-
-    $scope.dishes = menuFactory.getDishes().query(
-        function (response) {
-            $scope.dishes = response;
-            $timeout(function () {
-                $ionicLoading.hide();
-            }, 1000);
-        },
-        function (response) {
-            $scope.message = "Error: " + response.status + " " + response.statusText;
-            $timeout(function () {
-                $ionicLoading.hide();
-            }, 1000);
+        $ionicLoading.show({
+            template: '<ion-spinner></ion-spinner> Loading...'
         });
+
+        $scope.favorites = favoriteFactory.getFavorites();
+
+        $scope.dishes = menuFactory.getDishes().query(
+            function(response) {
+                $scope.dishes = response;
+                $timeout(function() {
+                    $ionicLoading.hide();
+                }, 1000);
+            },
+            function(response) {
+                $scope.message = "Error: " + response.status + " " + response.statusText;
+                $timeout(function() {
+                    $ionicLoading.hide();
+                }, 1000);
+            });
         console.log($scope.dishes, $scope.favorites);
 
         $scope.toggleDelete = function() {
@@ -313,6 +355,5 @@ angular.module('assign.controllers', [])
                 }
             }
             return out;
-
         }
     });
