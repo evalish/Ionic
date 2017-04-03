@@ -171,6 +171,7 @@ angular.module('assign.controllers', [])
     $scope.dish = {};
     $scope.showDish = false;
     $scope.message = "Loading ...";
+    $scope.mycomment = {};
 
     $scope.dish = menuFactory.getDishes().get({
             id: parseInt($stateParams.id, 10)
@@ -214,11 +215,15 @@ angular.module('assign.controllers', [])
     }).then(function(modal) {
         $scope.commentForm = modal;
     });
+
+
     $scope.closeComment = function() {
         $scope.commentForm.hide();
     };
 
-    // open comment modal
+
+
+
     $scope.openComment = function() {
         $scope.commentForm.show();
     };
@@ -227,6 +232,29 @@ angular.module('assign.controllers', [])
         $scope.openComment();
         $scope.closePopover();
 
+    };
+
+
+    $scope.submitComment = function() {
+
+        $scope.mycomment.date = new Date().toISOString();
+        console.log($scope.mycomment);
+
+        $scope.dish.comments.push($scope.mycomment);
+        menuFactory.getDishes().update({
+            id: $scope.dish.id
+        }, $scope.dish);
+
+       
+
+        $scope.mycomment = {
+            rating: 5,
+            comment: "",
+            author: "",
+            date: ""
+        };
+        $scope.closeComment()
+        console.log($scope.mycomment);
     };
 }])
 
@@ -248,8 +276,6 @@ angular.module('assign.controllers', [])
         menuFactory.getDishes().update({
             id: $scope.dish.id
         }, $scope.dish);
-
-        $scope.commentForm.$setPristine();
 
         $scope.mycomment = {
             rating: 5,
